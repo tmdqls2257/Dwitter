@@ -9,7 +9,7 @@ export default class TweetService {
     // 특정한 username을 받아오는 경우
     const query = username ? `?username=:${username}` : ''
     return this.http.fetch(`/tweets${query}`, {
-      // 서버에서 get요청을 했을 경우
+      // 서버에 get 요청을하여 header에 token를 줍니다.
       method: 'GET',
       headers: this.getHeaders(),
     })
@@ -20,7 +20,7 @@ export default class TweetService {
       method: 'POST',
       headers: this.getHeaders(),
       // object를 json형태로 넘겨주는 기능
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, username: 'ellie', name: 'Ellie' }),
     })
   }
 
@@ -35,6 +35,7 @@ export default class TweetService {
     return this.http.fetch(`/tweets/${tweetId}`, {
       method: 'PUT',
       headers: this.getHeaders(),
+      // body에 받아온 text를 json헝태로 업데이트 해줍니다.
       body: JSON.stringify({ text }),
     })
   }

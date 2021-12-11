@@ -1,3 +1,4 @@
+// 서버에 요청하기 위한 함수
 export default class HttpClient {
   constructor(baseURL) {
     this.baseURL = baseURL

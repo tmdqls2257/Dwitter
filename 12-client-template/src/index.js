@@ -10,11 +10,15 @@ import { AuthErrorEventBus } from './context/AuthContext'
 import HttpClient from './network/http.js'
 import TokenStorage from './db/token.js'
 
+//
 const baseURL = process.env.REACT_APP_BASE_URL
+// token에러가 발생할 경우 에러를 공지해 줍니다.
 const authErrorEventBus = new AuthErrorEventBus()
+// token을 save하고 get하고 delete
 const tokenStorage = new TokenStorage()
+// 서버에 요청하기 위한 함수
 const httpClient = new HttpClient(baseURL, authErrorEventBus)
-// 토큰을 만들어주는 기능
+// 로그인 로그아웃 회원가입을 하는 기능능
 const authService = new AuthService(httpClient, tokenStorage)
 // 트윗을 만들어주는 기능
 const tweetService = new TweetService(httpClient, tokenStorage)
