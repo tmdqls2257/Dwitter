@@ -2,11 +2,9 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import {} from 'express-async-errors'
 import * as userRepository from '../data/auth.js'
+import { config } from '../config.js'
 
 // TODO: Make it secure!
-const jwtSecretKey = 'F2dN7x8HVzBWaQuEEDnhsvHXRWqAR63z'
-const jwtExpiresInDays = '2d'
-const bcryptSaltRounds = 12
 
 export async function signup(req, res) {
   const { username, password, name, email, url } = req.body
@@ -17,7 +15,7 @@ export async function signup(req, res) {
     return res.status(409).json({ message: `${username} already exists` })
   }
   // bcrypt를 이용해 비밀 번호를 암호화 한다.
-  const hashed = await bcrypt.hash(password, bcryptSaltRounds)
+  const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds)
   // 유저를 만들어준다.
   // 이때 암호화된 비밀번호를 넘겨준다.
   const userId = await userRepository.createUser({
@@ -49,7 +47,9 @@ export async function login(req, res) {
 }
 
 function createJwtToken(id) {
-  return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays })
+  return jwt.sign({ id }, config.jwt.secretKey, {
+    expiresIn: config.jwt.expiresInSec,
+  })
 }
 
 export async function me(req, res, next) {

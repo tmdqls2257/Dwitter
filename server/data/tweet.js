@@ -42,6 +42,7 @@ export async function getAllByUsername(username) {
   )
 }
 
+// 배열에 등록된 아이디가 있는지 없는지 검사
 export async function getById(id) {
   const found = tweets.find(tweet => tweet.id === id)
   if (!found) {
@@ -51,6 +52,7 @@ export async function getById(id) {
   return { ...found, username, name, url }
 }
 
+// 트윗을 만들어주는 함수
 export async function create(text, userId) {
   const tweet = {
     id: new Date().toString(),
@@ -62,6 +64,7 @@ export async function create(text, userId) {
   return getById(tweet.id)
 }
 
+// 트윗을 수정해주는 함수
 export async function update(id, text) {
   const tweet = tweets.find(tweet => tweet.id === id)
   if (tweet) {
@@ -70,6 +73,7 @@ export async function update(id, text) {
   return getById(tweet.id)
 }
 
+// 트윗을 지워주는 함수
 export async function remove(id) {
   tweets = tweets.filter(tweet => tweet.id !== id)
 }
