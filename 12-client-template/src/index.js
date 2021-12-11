@@ -8,12 +8,16 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { AuthErrorEventBus } from './context/AuthContext'
 import HttpClient from './network/http.js'
+import TokenStorage from './db/token.js'
 
 const baseURL = process.env.REACT_APP_BASE_URL
-const httpClient = new HttpClient(baseURL)
 const authErrorEventBus = new AuthErrorEventBus()
-const authService = new AuthService()
-const tweetService = new TweetService(httpClient)
+const tokenStorage = new TokenStorage()
+const httpClient = new HttpClient(baseURL, authErrorEventBus)
+// 토큰을 만들어주는 기능
+const authService = new AuthService(httpClient, tokenStorage)
+// 트윗을 만들어주는 기능
+const tweetService = new TweetService(httpClient, tokenStorage)
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,4 +1,4 @@
-// 더미 데이터
+// abcd1234: $2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm
 let users = [
   {
     id: '1',
@@ -11,13 +11,14 @@ let users = [
 ]
 // 유저이름을 받아와서 저장한 곳에
 export async function findByUsername(username) {
-  // find함수는 조건을 만족하는 첫번째 함수만 리턴
   return users.find(user => user.username === username)
 }
+
 // Id가 있는지 없는지 찾는다.
 export async function findById(id) {
   return users.find(user => user.id === id)
 }
+
 // 유저를 만들어주는 함수
 export async function createUser(user) {
   const created = { ...user, id: Date.now().toString() }
