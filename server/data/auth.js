@@ -8,6 +8,13 @@ let users = [
     email: 'bob@gmail.com',
     url: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
   },
+  {
+    id: '2',
+    username: 'apple',
+    password: '$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm',
+    name: 'cock',
+    email: 'bob@gmail.com',
+  },
 ]
 // 유저이름을 받아와서 저장한 곳에
 export async function findByUsername(username) {

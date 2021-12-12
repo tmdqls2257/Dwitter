@@ -1,3 +1,4 @@
+import { getSocketIO } from '../connection/socket.js'
 import * as tweetRepository from '../data/tweet.js'
 
 export async function getTweets(req, res) {
@@ -22,6 +23,8 @@ export async function createTweet(req, res, next) {
   const { text } = req.body
   const tweet = await tweetRepository.create(text, req.userId)
   res.status(201).json(tweet)
+  // 트윗을 만들때만다 tweets라는 카테고리에 tweet을 broadcast한다.
+  getSocketIO().emit('tweets', tweet)
 }
 
 export async function updateTweet(req, res, next) {
@@ -35,6 +38,7 @@ export async function updateTweet(req, res, next) {
   if (tweet.userId !== req.userId) {
     return res.sendStatus(403)
   }
+  // 그 경우가 아닐 경우 업데이트
   const updated = await tweetRepository.update(id, text)
   res.status(200).json(updated)
 }
