@@ -1,53 +1,56 @@
-import React, { memo, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import Banner from './Banner';
-import NewTweetForm from './NewTweetForm';
-import TweetCard from './TweetCard';
-import { useAuth } from '../context/AuthContext';
+import React, { memo, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import Banner from './Banner'
+import NewTweetForm from './NewTweetForm'
+import TweetCard from './TweetCard'
+import { useAuth } from '../context/AuthContext'
 
 const Tweets = memo(({ tweetService, username, addable }) => {
-  const [tweets, setTweets] = useState([]);
-  const [error, setError] = useState('');
-  const history = useHistory();
-  const { user } = useAuth();
+  const [tweets, setTweets] = useState([])
+  const [error, setError] = useState('')
+  const history = useHistory()
+  const { user } = useAuth()
 
   useEffect(() => {
     tweetService
       .getTweets(username)
-      .then((tweets) => setTweets([...tweets]))
-      .catch(onError);
-  }, [tweetService, username, user]);
+      .then(tweets => setTweets([...tweets]))
+      .catch(onError)
+    const stopSync = tweetService.onSync(tweet => onCreated(tweet))
+    return () => stopSync()
+  }, [tweetService, username, user])
 
-  const onCreated = (tweet) => {
-    setTweets((tweets) => [tweet, ...tweets]);
-  };
+  // 새로운 트윗을 추가해줍니다.
+  const onCreated = tweet => {
+    setTweets(tweets => [tweet, ...tweets])
+  }
 
-  const onDelete = (tweetId) =>
+  const onDelete = tweetId =>
     tweetService
       .deleteTweet(tweetId)
       .then(() =>
-        setTweets((tweets) => tweets.filter((tweet) => tweet.id !== tweetId))
+        setTweets(tweets => tweets.filter(tweet => tweet.id !== tweetId))
       )
-      .catch((error) => setError(error.toString()));
+      .catch(error => setError(error.toString()))
 
   const onUpdate = (tweetId, text) =>
     tweetService
       .updateTweet(tweetId, text)
-      .then((updated) =>
-        setTweets((tweets) =>
-          tweets.map((item) => (item.id === updated.id ? updated : item))
+      .then(updated =>
+        setTweets(tweets =>
+          tweets.map(item => (item.id === updated.id ? updated : item))
         )
       )
-      .catch((error) => error.toString());
+      .catch(error => error.toString())
 
-  const onUsernameClick = (tweet) => history.push(`/${tweet.username}`);
+  const onUsernameClick = tweet => history.push(`/${tweet.username}`)
 
-  const onError = (error) => {
-    setError(error.toString());
+  const onError = error => {
+    setError(error.toString())
     setTimeout(() => {
-      setError('');
-    }, 3000);
-  };
+      setError('')
+    }, 3000)
+  }
 
   return (
     <>
@@ -59,9 +62,9 @@ const Tweets = memo(({ tweetService, username, addable }) => {
         />
       )}
       {error && <Banner text={error} isAlert={true} transient={true} />}
-      {tweets.length === 0 && <p className='tweets-empty'>No Tweets Yet</p>}
-      <ul className='tweets'>
-        {tweets.map((tweet) => (
+      {tweets.length === 0 && <p className="tweets-empty">No Tweets Yet</p>}
+      <ul className="tweets">
+        {tweets.map(tweet => (
           <TweetCard
             key={tweet.id}
             tweet={tweet}
@@ -73,6 +76,6 @@ const Tweets = memo(({ tweetService, username, addable }) => {
         ))}
       </ul>
     </>
-  );
-});
-export default Tweets;
+  )
+})
+export default Tweets

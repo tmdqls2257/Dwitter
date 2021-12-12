@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext'
 import { AuthErrorEventBus } from './context/AuthContext'
 import HttpClient from './network/http.js'
 import TokenStorage from './db/token.js'
+import Socket from './network/socket'
 
 //
 const baseURL = process.env.REACT_APP_BASE_URL
@@ -20,8 +21,16 @@ const tokenStorage = new TokenStorage()
 const httpClient = new HttpClient(baseURL, authErrorEventBus)
 // 로그인 로그아웃 회원가입을 하는 기능능
 const authService = new AuthService(httpClient, tokenStorage)
+// socket에서는 token을 읽게만 함으로 tokenStorage.getToken을 사용한다.
+const socketClient = new Socket(baseURL, () => tokenStorage.getToken)
 // 트윗을 만들어주는 기능
-const tweetService = new TweetService(httpClient, tokenStorage)
+const tweetService = new TweetService(httpClient, tokenStorage, socketClient)
+
+const socketIO = Socket(baseURL)
+socketIO.on('connect_error', err => {
+  console.log('socket error ', err)
+}) // dwitter라는 이벤트가 발생하면
+socketIO.on('dwitter', message => console.log(message))
 
 ReactDOM.render(
   <React.StrictMode>
