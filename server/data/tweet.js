@@ -20,6 +20,13 @@ const Tweet = sequelize.define('tweet', {
 Tweet.belongsTo(User)
 
 const INCLUDE_USER = {
+  // "text": "New Message",
+  // "createdAt": "2021-12-13T16:12:11.000Z",
+  // "userId": 1,
+  // "name": "Redbeen",
+  // "username": "appplecock",
+  // "url": "https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png"
+  // 형태로 가져오기 위한 기능
   attributes: [
     'id',
     'text',
