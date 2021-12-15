@@ -1,52 +1,25 @@
-import SQ from 'sequelize'
-import { sequelize } from '../db/database.js'
-const DataTypes = SQ.DataTypes
+import { getUsers } from '../database/database.js'
+import MongoDb from 'mongodb'
+const ObjectId = MongoDb.ObjectId
 
-export const User = sequelize.define(
-  'user',
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true,
-    },
-    username: {
-      type: DataTypes.STRING(45),
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    url: DataTypes.TEXT,
-  },
-  { timestamps: false }
-)
-
-// 유저이름을 받아와서 저장한 곳에
 export async function findByUsername(username) {
-  // return users.find(user => user.username === username)
-  // users테이블의 username인 것만 가져온다.
-  return User.findOne({ where: { username } })
+  return getUsers()
+    .findOne({ username }) //
+    .then(mapOptionalUser)
 }
 
-// Id가 있는지 없는지 찾는다.
 export async function findById(id) {
-  return User.findByPk(id)
+  return getUsers()
+    .findOne({ _id: new ObjectId(id) })
+    .then(mapOptionalUser)
 }
 
-// 유저를 만들어주는 함수
 export async function createUser(user) {
-  return User.create(user).then(data => {
-    return data.dataValues.id
-  })
+  return getUsers()
+    .insertOne(user)
+    .then(data => data.insertedId.toString())
+}
+
+function mapOptionalUser(user) {
+  return user ? { ...user, id: user._id.toString() } : user
 }

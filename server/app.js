@@ -8,6 +8,7 @@ import authRouter from './router/auth.js'
 import { config } from './config.js'
 import { initSocket } from './connection/socket.js'
 import { sequelize } from './db/database.js'
+import { connectDB } from './database/database.js'
 // import { db } from './db/database.js'
 
 const app = express()
@@ -28,10 +29,10 @@ app.use((error, req, res, next) => {
   console.error(error)
   res.sendStatus(500)
 })
-// 스키마가 테이블로 존재하지 않는다면
-// 테이블을 만즐어줍니다.
-sequelize.sync().then(client => {
-  // console.log(client)
-  const server = app.listen(config.host.port)
-  initSocket(server)
-})
+
+connectDB()
+  .then(() => {
+    const server = app.listen(config.host.port)
+    initSocket(server)
+  })
+  .catch(console.error())
