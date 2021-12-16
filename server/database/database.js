@@ -1,12 +1,21 @@
-import MongoDb from 'mongodb'
+import Mongoose from 'mongoose'
 import { config } from '../config.js'
 
 let db
 export async function connectDB() {
-  return MongoDb.MongoClient.connect(config.db.host) //
-    .then(client => {
-      db = client.db()
-    })
+  return Mongoose.connect(config.db.host)
+}
+
+export function userVirtualId(schema) {
+  // 가상의 아이디를 읽어온다.
+  schema.virtual('id').get(function () {
+    return this._id.toString()
+  })
+
+  // virtuals :true를 해줘야 정보가 JSON형태로 추가가된다.
+  schema.set('toJSON', { virtuals: true })
+
+  schema.set('toObject', { virtuals: true })
 }
 
 export function getUsers() {
