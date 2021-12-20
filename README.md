@@ -10,3 +10,4 @@ npm i cors, morgan, helmet, express, express-async-errors
 npm i jsonwebtoken
 npm i socket.io
 npm i --save sequelize
+npm i mongodb

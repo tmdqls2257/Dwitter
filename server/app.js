@@ -7,7 +7,6 @@ import tweetsRouter from './router/tweets.js'
 import authRouter from './router/auth.js'
 import { config } from './config.js'
 import { initSocket } from './connection/socket.js'
-import { sequelize } from './db/database.js'
 import { connectDB } from './database/database.js'
 // import { db } from './db/database.js'
 
@@ -25,6 +24,7 @@ app.use((req, res, next) => {
   res.sendStatus(404)
 })
 
+// 에러 핸들러를 반드시 작성해줘야함
 app.use((error, req, res, next) => {
   console.error(error)
   res.sendStatus(500)
