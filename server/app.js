@@ -15,6 +15,7 @@ const app = express()
 app.use(express.json())
 app.use(helmet())
 app.use(cors())
+// get, post 호출의 상태를 log로 남겨줍니다.
 app.use(morgan('tiny'))
 
 app.use('/tweets', tweetsRouter)
