@@ -1,34 +1,27 @@
-// abcd1234: $2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm
-let users = [
-  {
-    id: '1',
-    username: 'bob',
-    password: '$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm',
-    name: 'Bob',
-    email: 'bob@gmail.com',
-    url: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
-  },
-  {
-    id: '2',
-    username: 'apple',
-    password: '$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm',
-    name: 'cock',
-    email: 'bob@gmail.com',
-  },
-]
-// 유저이름을 받아와서 저장한 곳에
+import { userVirtualId } from '../database/database.js'
+import Mongoose from 'mongoose'
+
+const userSchema = new Mongoose.Schema({
+  username: { type: String, require: true },
+  name: { type: String, require: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  url: String,
+})
+
+userVirtualId(userSchema)
+const User = Mongoose.model('User', userSchema)
+
 export async function findByUsername(username) {
-  return users.find(user => user.username === username)
+  // 가상의 아이디를 추가해줬기 때문에 then이 필요없다.
+  return User.findOne({ username })
 }
 
-// Id가 있는지 없는지 찾는다.
 export async function findById(id) {
-  return users.find(user => user.id === id)
+  return User.findById(id)
 }
 
-// 유저를 만들어주는 함수
 export async function createUser(user) {
-  const created = { ...user, id: Date.now().toString() }
-  users.push(created)
-  return created.id
+  // return User.create(user)
+  return new User(user).save().then(data => data.id)
 }

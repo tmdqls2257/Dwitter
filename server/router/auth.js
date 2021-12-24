@@ -16,6 +16,7 @@ const validateCredential = [
     .trim()
     .isLength({ min: 5 })
     .withMessage('password should be at least 5 characters'),
+  // 에러가 없으면 상관없지만 있다면 에러가 있다면 에러를 내보냄
   validate,
 ]
 

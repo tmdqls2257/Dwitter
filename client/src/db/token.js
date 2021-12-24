@@ -1,6 +1,6 @@
 const TOKEN = 'token'
 
-export default class tokenStorage {
+export default class TokenStorage {
   saveToken(token) {
     // setItem : 전달해준 첫번째 인자의 키가 없을 경우 첫번째 인자를 키로 두번째를 값으로 생성해줍니다.
     localStorage.setItem(TOKEN, token)

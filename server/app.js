@@ -5,18 +5,17 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import tweetsRouter from './router/tweets.js'
 import authRouter from './router/auth.js'
-import { initSocket } from './connection/socket.js'
-// process를 호출하기 위해 해줘야함
-import dotenv from 'dotenv'
 import { config } from './config.js'
-
-dotenv.config()
+import { initSocket } from './connection/socket.js'
+import { connectDB } from './database/database.js'
+// import { db } from './db/database.js'
 
 const app = express()
 
 app.use(express.json())
 app.use(helmet())
 app.use(cors())
+// get, post 호출의 상태를 log로 남겨줍니다.
 app.use(morgan('tiny'))
 
 app.use('/tweets', tweetsRouter)
@@ -26,26 +25,16 @@ app.use((req, res, next) => {
   res.sendStatus(404)
 })
 
+// 에러 핸들러를 반드시 작성해줘야함
 app.use((error, req, res, next) => {
   console.error(error)
   res.sendStatus(500)
 })
-const server = app.listen(config.host.port)
 
-initSocket(server)
-
-// npm i dotenv를 설치하여 env처럼 사용하기
-// const socketIO = new Server(server, {
-//   cors: {
-//     origin: '*',
-//   },
-// })
-// 이벤트 베이스이기 때문에 on을 사용해야합니다.
-// 누군가가 커넥션을 했다면
-// socketIO.on('connection', socket => {
-//   console.log('Client is here!')
-// 해당하는 카테고리 별로 전달하고자 하는 메시지를 전해줄 수 있다.
-// 만약 채팅방 별로 주고 받는 데이터를 그룹지어야 한다면
-// 채팅방이 그룹이 될 수 있고, 해당 토픽이 그룹이 될 수 있다.
-//   socketIO.emit('dwitter', 'Hello')
-// })
+connectDB()
+  .then(() => {
+    console.log('init')
+    const server = app.listen(config.host.port)
+    initSocket(server)
+  })
+  .catch(console.error())

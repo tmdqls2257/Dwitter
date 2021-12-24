@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { config } from '../config.js'
 import * as userRepository from '../data/auth.js'
 
 const AUTH_ERROR = { message: 'Authentication Error' }
@@ -15,25 +16,20 @@ export const isAuth = async (req, res, next) => {
 
   // Bearer하고 띄어쓰기 split으로 분리
   const token = authHeader.split(' ')[1]
-  // TODO: Make it secure!
-  jwt.verify(
-    token,
-    'F2dN7x8HVzBWaQuEEDnhsvHXRWqAR63z',
-    async (error, decoded) => {
-      if (error) {
-        return res.status(401).json(AUTH_ERROR)
-      }
-      // 사용자가 있는지 없는 찾아본다.
-      const user = await userRepository.findById(decoded.id)
-      // 유저가 없다면 401에러를 보내줍니다.
-      if (!user) {
-        return res.status(401).json(AUTH_ERROR)
-      }
-      // 해독해서 사용자의 아이디가 판별이 된다면
-      // 요청에 userId를 추가해줍니다
-      // 다른 콜백함수에서 동일하게 접근해야하는 데이터라면 등록해줄 수 있다.
-      req.userId = user.id // req.customData
-      next()
+  jwt.verify(token, config.jwt.secretKey, async (error, decoded) => {
+    if (error) {
+      return res.status(401).json(AUTH_ERROR)
     }
-  )
+    // 사용자가 있는지 없는 찾아본다.
+    const user = await userRepository.findById(decoded.id)
+    // 유저가 없다면 401에러를 보내줍니다.
+    if (!user) {
+      return res.status(401).json(AUTH_ERROR)
+    }
+    // 해독해서 사용자의 아이디가 판별이 된다면
+    // 요청에 userId를 추가해줍니다
+    // 다른 콜백함수에서 동일하게 접근해야하는 데이터라면 등록해줄 수 있다.
+    req.userId = user.id // req.customData
+    next()
+  })
 }
