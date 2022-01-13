@@ -25,6 +25,7 @@ export async function signup(req, res) {
   })
   // 토큰을 만들어준다.
   const token = createJwtToken(userId)
+  setToken(res, token)
   res.status(201).json({ token, username })
 }
 
@@ -41,7 +42,20 @@ export async function login(req, res) {
     return res.status(401).json({ message: 'Invalid user or password' })
   }
   const token = createJwtToken(user.id)
+  setToken(res, token)
   res.status(200).json({ token, username })
+}
+
+function setToken(res, token) {
+  res.Cookie('token', token, {
+    httpOnly: true,
+    // 다른 도메인이더라도 동작할 수 있도록
+    sameSite: 'none',
+    // sameSite: 'none'설정시 반드시 추가
+    secure: true,
+    // 만료시간
+    maxAge: config.jwt.expiresInSec * 1000,
+  })
 }
 
 function createJwtToken(id) {

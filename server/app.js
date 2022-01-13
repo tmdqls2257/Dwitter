@@ -16,6 +16,7 @@ const app = express()
 const corsOption = {
   origin: config.cors.allowedOrigin,
   optionSuccessStatus: 200,
+  // httpOnly 쿠키를 다시받게 하기 위해 정보의 안전성을 위한 설정
   credential: true,
 }
 app.use(express.json())

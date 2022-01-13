@@ -7,15 +7,30 @@ const AUTH_ERROR = { message: 'Authentication Error' }
 // 있다면 token이 올바른지
 // 사용자가 있는지 없는지를 판별하는 함수
 export const isAuth = async (req, res, next) => {
+  // cookie가 header에 있는지 없는지
+  // Cookie (for Browser) 검사
+  // non browser클라이언트도 검사해줘야하기 때문에
+  // Header (for non-Browser Client) 검사
+  let token
+
   // header안에 authorization이라는 키의 값을 받아온다.
   const authHeader = req.get('Authorization')
-  // authHeader가 없거나 authHeader의 처음이 'Bearer '가 아니면 401
-  if (!(authHeader && authHeader.startsWith('Bearer '))) {
+  // check the header first
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    // Bearer하고 띄어쓰기 split으로 분리
+    token = authHeader.split(' ')[1]
+  }
+
+  // if no token in header, check the cookie
+  if (!token) {
+    token = req.cookies['token']
+  }
+
+  if (!token) {
+    // authHeader가 없거나 authHeader의 처음이 'Bearer '가 아니면 401
     return res.status(401).json(AUTH_ERROR)
   }
 
-  // Bearer하고 띄어쓰기 split으로 분리
-  const token = authHeader.split(' ')[1]
   jwt.verify(token, config.jwt.secretKey, async (error, decoded) => {
     if (error) {
       return res.status(401).json(AUTH_ERROR)
