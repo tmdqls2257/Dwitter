@@ -3,21 +3,27 @@ import 'express-async-errors'
 import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import tweetsRouter from './router/tweets.js'
 import authRouter from './router/auth.js'
 import { config } from './config.js'
 import { initSocket } from './connection/socket.js'
 import { connectDB } from './database/database.js'
+
 // import { db } from './db/database.js'
 
 const app = express()
-
+const corsOption = {
+  origin: config.cors.allowedOrigin,
+  optionSuccessStatus: 200,
+  credential: true,
+}
 app.use(express.json())
 app.use(helmet())
-app.use(cors())
+app.use(cors(corsOption))
 // get, post 호출의 상태를 log로 남겨줍니다.
 app.use(morgan('tiny'))
-
+app.use(cookieParser())
 app.use('/tweets', tweetsRouter)
 app.use('/auth', authRouter)
 
@@ -34,7 +40,7 @@ app.use((error, req, res, next) => {
 connectDB()
   .then(() => {
     console.log('init')
-    const server = app.listen(config.host.port)
+    const server = app.listen(config.port)
     initSocket(server)
   })
   .catch(console.error())

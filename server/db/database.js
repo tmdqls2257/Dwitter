@@ -5,8 +5,15 @@ import SQ from 'sequelize'
 const { host, user, database, password, port } = config.db
 export const sequelize = new SQ.Sequelize(database, user, password, {
   host,
-  dialect: 'mysql',
+  dialect: 'postgres',
   logging: false,
+  dialectOptions: {
+    ssl: {
+      // heroku는 ssl을 이용하기 때문
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
   port,
 })
 // 예민한 정보가 찍히기 때문에 env에 정보를 넘겨야함
