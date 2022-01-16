@@ -1,0 +1,15 @@
+# Each route describes how an incoming URL is going to be processed by Platform.sh.
+'https://www.{default}/':
+  type: upstream
+  upstream: 'Twitter:http'
+
+'https://{default}/':
+  type: redirect
+  to: 'https://www.{default}/'
+
+# 소켓을 사용하기 때문
+'https://www.{default}/ws':
+  type: upstream
+  upstream: 'Twitter:http'
+  cache:
+    enable: false
