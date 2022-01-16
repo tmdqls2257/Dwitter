@@ -30,6 +30,7 @@ export const isAuth = async (req, res, next) => {
     // 요청에 userId를 추가해줍니다
     // 다른 콜백함수에서 동일하게 접근해야하는 데이터라면 등록해줄 수 있다.
     req.userId = user.id // req.customData
+    req.token = token
     next()
   })
 }

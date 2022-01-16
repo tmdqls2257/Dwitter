@@ -14,7 +14,12 @@ const app = express()
 
 app.use(express.json())
 app.use(helmet())
-app.use(cors())
+app.use(
+  cors({
+    origin: config.cors.allow,
+    optionsSuccessStatus: 200,
+  })
+)
 app.use(morgan('tiny'))
 
 app.use('/tweets', tweetsRouter)
@@ -32,6 +37,6 @@ app.use((error, req, res, next) => {
 // 테이블을 만즐어줍니다.
 sequelize.sync().then(client => {
   // console.log(client)
-  const server = app.listen(config.host.port)
+  const server = app.listen(config.port)
   initSocket(server)
 })
