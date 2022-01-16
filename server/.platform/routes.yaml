@@ -7,9 +7,8 @@
   type: redirect
   to: 'https://www.{default}/'
 
-# 소켓을 사용하기 때문
 'https://www.{default}/ws':
   type: upstream
   upstream: 'Twitter:http'
   cache:
-    enable: false
+    enabled: false

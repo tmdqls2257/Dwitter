@@ -20,7 +20,7 @@ mounts:
     source_path: uploads
 
 # The size of the persistent disk of the application (in MB).
-disk: 512
+disk: 256
 
 # The relationships of the application with services or other applications.
 #
@@ -33,8 +33,6 @@ relationships:
 web:
   commands:
     start: 'node app.js'
-
-  #NGINX
   locations:
-  '/':
-    passthru: true
+    '/':
+      passthru: true
