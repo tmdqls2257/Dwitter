@@ -7,48 +7,50 @@ import {
   useImperativeHandle,
   useMemo,
   useState,
-} from 'react';
-import Header from '../components/Header';
-import Login from '../pages/Login';
+} from 'react'
+import Header from '../components/Header'
+import Login from '../pages/Login'
 
-const AuthContext = createContext({});
+const AuthContext = createContext({})
 
-const contextRef = createRef();
+// 사용자의 토큰
+const tokenRef = createRef()
 
 export function AuthProvider({ authService, authErrorEventBus, children }) {
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState(undefined)
 
-  useImperativeHandle(contextRef, () => (user ? user.token : undefined));
-
-  useEffect(() => {
-    authErrorEventBus.listen((err) => {
-      console.log(err);
-      setUser(undefined);
-    });
-  }, [authErrorEventBus]);
+  // 사용자의 토큰을 가지고 있다가 fetchToken함수가 실행이 될 때 사용이 됩니다.
+  useImperativeHandle(tokenRef, () => (user ? user.token : undefined))
 
   useEffect(() => {
-    authService.me().then(setUser).catch(console.error);
-  }, [authService]);
+    authErrorEventBus.listen(err => {
+      console.log(err)
+      setUser(undefined)
+    })
+  }, [authErrorEventBus])
+
+  useEffect(() => {
+    authService.me().then(setUser).catch(console.error)
+  }, [authService])
 
   const signUp = useCallback(
     async (username, password, name, email, url) =>
       authService
         .signup(username, password, name, email, url)
-        .then((user) => setUser(user)),
+        .then(user => setUser(user)),
     [authService]
-  );
+  )
 
   const logIn = useCallback(
     async (username, password) =>
-      authService.login(username, password).then((user) => setUser(user)),
+      authService.login(username, password).then(user => setUser(user)),
     [authService]
-  );
+  )
 
   const logout = useCallback(
     async () => authService.logout().then(() => setUser(undefined)),
     [authService]
-  );
+  )
 
   const context = useMemo(
     () => ({
@@ -58,31 +60,31 @@ export function AuthProvider({ authService, authErrorEventBus, children }) {
       logout,
     }),
     [user, signUp, logIn, logout]
-  );
+  )
 
   return (
     <AuthContext.Provider value={context}>
       {user ? (
         children
       ) : (
-        <div className='app'>
+        <div className="app">
           <Header />
           <Login onSignUp={signUp} onLogin={logIn} />
         </div>
       )}
     </AuthContext.Provider>
-  );
+  )
 }
 
 export class AuthErrorEventBus {
   listen(callback) {
-    this.callback = callback;
+    this.callback = callback
   }
   notify(error) {
-    this.callback(error);
+    this.callback(error)
   }
 }
 
-export default AuthContext;
-export const fetchToken = () => contextRef.current;
-export const useAuth = () => useContext(AuthContext);
+export default AuthContext
+export const fetchToken = () => tokenRef.current
+export const useAuth = () => useContext(AuthContext)
