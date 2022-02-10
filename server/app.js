@@ -8,11 +8,13 @@ import authRouter from './router/auth.js'
 import { config } from './config.js'
 import { initSocket } from './connection/socket.js'
 import { sequelize } from './db/database.js'
+import cookieParser from 'cookie-parser'
 // import { db } from './db/database.js'
 
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(helmet())
 app.use(
   cors({

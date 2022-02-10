@@ -24,6 +24,8 @@ class Socket {
         next()
       })
     })
+    const sockets = this.io.fetchSockets()
+    console.log(sockets)
 
     this.io.on('connection', socket => {
       console.log('Socket client connected')
