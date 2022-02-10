@@ -3,11 +3,12 @@ export default class TweetService {
   constructor(http, tokenStorage, socket) {
     this.http = http
     this.tokenStorage = tokenStorage
+    this.socket = socket
   }
 
   async getTweets(username) {
     // 특정한 username을 받아오는 경우
-    const query = username ? `?username=:${username}` : ''
+    const query = username ? `?username=${username}` : ''
     return this.http.fetch(`/tweets${query}`, {
       // 서버에 get 요청을하여 header에 token를 줍니다.
       method: 'GET',
@@ -26,8 +27,8 @@ export default class TweetService {
 
   async deleteTweet(tweetId) {
     return this.http.fetch(`/tweets/${tweetId}`, {
-      headers: this.getHeaders(),
       method: 'DELETE',
+      headers: this.getHeaders(),
     })
   }
 

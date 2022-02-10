@@ -1,34 +1,52 @@
-// abcd1234: $2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm
-let users = [
+import SQ from 'sequelize'
+import { sequelize } from '../db/database.js'
+const DataTypes = SQ.DataTypes
+
+export const User = sequelize.define(
+  'user',
   {
-    id: '1',
-    username: 'bob',
-    password: '$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm',
-    name: 'Bob',
-    email: 'bob@gmail.com',
-    url: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
+    username: {
+      type: DataTypes.STRING(45),
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    url: DataTypes.TEXT,
   },
-  {
-    id: '2',
-    username: 'apple',
-    password: '$2b$12$G9xf8SFq3oTEgdj7ozHQ/uhDOyeQcUEDU8tnOcvpvApuadr3nE5Vm',
-    name: 'cock',
-    email: 'bob@gmail.com',
-  },
-]
+  { timestamps: false }
+)
+
 // 유저이름을 받아와서 저장한 곳에
 export async function findByUsername(username) {
-  return users.find(user => user.username === username)
+  // return users.find(user => user.username === username)
+  // users테이블의 username인 것만 가져온다.
+  return User.findOne({ where: { username } })
 }
 
 // Id가 있는지 없는지 찾는다.
 export async function findById(id) {
-  return users.find(user => user.id === id)
+  return User.findByPk(id)
 }
 
 // 유저를 만들어주는 함수
 export async function createUser(user) {
-  const created = { ...user, id: Date.now().toString() }
-  users.push(created)
-  return created.id
+  return User.create(user).then(data => {
+    return data.dataValues.id
+  })
 }

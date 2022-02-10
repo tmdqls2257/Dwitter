@@ -1,5 +1,5 @@
-import { getSocketIO } from '../connection/socket.js'
 import * as tweetRepository from '../data/tweet.js'
+import { getSocketIO } from '../connection/socket.js'
 
 export async function getTweets(req, res) {
   const username = req.query.username
@@ -23,7 +23,7 @@ export async function createTweet(req, res, next) {
   const { text } = req.body
   const tweet = await tweetRepository.create(text, req.userId)
   res.status(201).json(tweet)
-  // 트윗을 만들때만다 tweets라는 카테고리에 tweet을 broadcast한다.
+  // 트윗을 만들때마다 tweets라는 카테고리에 tweet을 broadcast한다.
   getSocketIO().emit('tweets', tweet)
 }
 

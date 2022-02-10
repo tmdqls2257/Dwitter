@@ -1,79 +1,96 @@
-import * as userRepository from './auth.js'
+import SQ from 'sequelize'
+import { db, sequelize } from '../db/database.js'
+import { User } from './auth.js'
+const DataTypes = SQ.DataTypes
+const Sequelize = SQ.Sequelize
 
-let tweets = [
-  {
-    id: '1',
-    text: '드림코더분들 화이팅!',
-    createdAt: new Date().toString(),
-    userId: '1',
+const Tweet = sequelize.define('tweet', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
   },
-  {
-    id: '2',
-    text: '안뇽!',
-    createdAt: new Date().toString(),
-    userId: '1',
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false,
   },
-]
+})
+// 트윗은 사용자에게 존속된다.
+Tweet.belongsTo(User)
+
+const INCLUDE_USER = {
+  // "text": "New Message",
+  // "createdAt": "2021-12-13T16:12:11.000Z",
+  // "userId": 1,
+  // "name": "Redbeen",
+  // "username": "appplecock",
+  // "url": "https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png"
+  // 형태로 가져오기 위한 기능
+  attributes: [
+    'id',
+    'text',
+    'createdAt',
+    'userId',
+    // collum안에 있는 user.name을 중첩된 형태가 아닌 name으로 가져온다.
+    [Sequelize.col('user.name'), 'name'],
+    [Sequelize.col('user.username'), 'username'],
+    [Sequelize.col('user.url'), 'url'],
+  ],
+  include: {
+    model: User,
+    attributes: [],
+  },
+}
+
+const ORDER_DESC = {
+  order: [['createdAt', 'DESC']],
+}
 
 // 정적으로 유저 네임을 받아오지 않게 하기 위해서 사용하는 함수
 export async function getAll() {
-  // promise.all을 사용하는 이유
-  // 점진적으로 구현해 나가기 위해서 메모리로, 간단한 배열을 이용해서, 구현했어요.
-  // 아무리 메모리 구현사항이라 할지라도, 데이터베이스 처럼 동작하도록 만든거라 async로 구현해 두었답니다.
-  // 데이터베이스처럼 파일의 데이터를 읽고/쓸때는 꽤 오랜 시간이 걸리므로 무조건! async로 해줘야 해요
-  return Promise.all(
-    tweets.map(async tweet => {
-      // userRepository.findById함수를 이용하여 tweet의 userId를 이용해서
-      // userRepository에서 받아온 것이 비동기 임으로 await을 써줍니다.
-      // map에서 리턴되는 것은 tweet 자체 아이템이 아니라
-      // tweet를 리턴하는 프로미스를 가지고 있고 tweet.map을 하게 되면
-      // promise의 배열이 만들어지게 된다.
-      const { username, name, url } = await userRepository.findById(
-        tweet.userId
-      )
-      return { ...tweet, username, name, url }
-    })
-  )
+  return Tweet.findAll({ ...INCLUDE_USER, ...ORDER_DESC })
 }
 
 export async function getAllByUsername(username) {
-  return getAll().then(tweets =>
-    tweets.filter(tweet => tweet.username === username)
-  )
+  return Tweet.findAll({
+    ...INCLUDE_USER,
+    ...ORDER_DESC,
+    include: {
+      ...INCLUDE_USER.include,
+      where: { username },
+    },
+  })
 }
 
-// 배열에 등록된 아이디가 있는지 없는지 검사
+// 배열에 등록된 아이디가 tweet에 있는지 없는지 검사
+// 있으면 리턴
 export async function getById(id) {
-  const found = tweets.find(tweet => tweet.id === id)
-  if (!found) {
-    return null
-  }
-  const { username, name, url } = await userRepository.findById(found.userId)
-  return { ...found, username, name, url }
+  return Tweet.findOne({
+    where: { id },
+    ...INCLUDE_USER,
+  })
 }
 
 // 트윗을 만들어주는 함수
 export async function create(text, userId) {
-  const tweet = {
-    id: new Date().toString(),
-    text,
-    createdAt: new Date(),
-    userId,
-  }
-  tweets = [tweet, ...tweets]
-  return getById(tweet.id)
+  return Tweet.create({ text, userId }) //
+    .then(data => this.getById(data.dataValues.id))
 }
 
 // 트윗을 수정해주는 함수
 export async function update(id, text) {
-  const tweet = tweets.find(tweet => tweet.id === id)
-  if (tweet) {
-    tweet.text = text
-  }
-  return getById(tweet.id)
+  return Tweet.findByPk(id, INCLUDE_USER) //
+    .then(tweet => {
+      tweet.text = text
+      return tweet.save()
+    })
 }
 
 // 트윗을 지워주는 함수
 export async function remove(id) {
-  tweets = tweets.filter(tweet => tweet.id !== id)
+  return Tweet.findByPk(id) //
+    .then(tweet => {
+      tweet.destroy()
+    })
 }

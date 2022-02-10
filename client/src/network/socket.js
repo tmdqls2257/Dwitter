@@ -15,7 +15,6 @@ export default class Socket {
 
   // 이벤트로 인한 어떠한 콜백을 하고 싶은지 받아오는 함수
   onSync(event, callback) {
-    // io가 없다면 연결해주고
     if (!this.io.connected) {
       this.io.connect()
     }
