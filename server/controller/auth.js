@@ -55,13 +55,13 @@ function createJwtToken(id) {
 function setToken(res, token) {
   // header에 cookie에 저장해주면 된다.
   res.cookie('token', token, {
+    // 유효시간이 지나면 파기
+    maxAge: config.jwt.expiresInSec * 1000,
     httpOnly: true,
     // 클라이언트와 서버가 다른 아이피이더라도 작동할 수 있게
     sameSite: 'none',
     // sameSite를 none으로 설정한 경우
     secure: true,
-    // 유효시간이 지나면 파기
-    maxAge: config.jwt.expiresInSec * 1000,
   })
 }
 

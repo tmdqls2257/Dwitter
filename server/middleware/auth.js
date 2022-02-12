@@ -13,7 +13,7 @@ export const isAuth = async (req, res, next) => {
   let token
   // header안에 authorization이라는 키의 값을 받아온다.
   const authHeader = req.get('Authorization')
-  if (!(authHeader && authHeader.startsWith('Bearer '))) {
+  if (authHeader && authHeader.startsWith('Bearer ')) {
     // Bearer하고 띄어쓰기 split으로 분리
     token = authHeader.split(' ')[1]
   }

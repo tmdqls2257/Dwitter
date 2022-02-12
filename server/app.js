@@ -20,6 +20,7 @@ app.use(
   cors({
     origin: config.cors.allow,
     optionsSuccessStatus: 200,
+    credentials: true,
   })
 )
 app.use(morgan('tiny'))
