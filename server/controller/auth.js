@@ -64,6 +64,10 @@ function setToken(res, token) {
     secure: true,
   })
 }
+export async function logout(req, res, next) {
+  res.cookie('token', '')
+  res.status(200).json({ message: 'User has been logged out' })
+}
 
 export async function me(req, res, next) {
   // request에서 받아온 username이 존재하는지 아닌지 판별한다.

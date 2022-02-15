@@ -33,6 +33,9 @@ const validateSignup = [
 router.post('/signup', validateSignup, authController.signup)
 
 router.post('/login', validateCredential, authController.login)
+
+router.post('/logout', authController.logout)
+
 // GET auth/me
 // 로그인한 다음 사용하는 함수임으로
 // token은 유효한지 유저는 올바른지를 검사해야한다.

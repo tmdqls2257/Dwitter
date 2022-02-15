@@ -31,6 +31,8 @@ export default class AuthService {
 
   async logout() {
     // 서버에 전달할 필요없이 클라이언트에서 토큰을 지워주면 됩니다.
-    this.tokenStorage.clearToken()
+    return this.http.fetch('/auth/logout', {
+      method: 'POST',
+    })
   }
 }
