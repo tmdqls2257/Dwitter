@@ -8,7 +8,7 @@
 ![ezgif com-gif-maker (9)](https://user-images.githubusercontent.com/54207332/158102976-bdc947f8-3a47-495c-8e0b-9b3546e384fd.gif)
 
 # mytweet 기능
-내가 작성한 트윗을 가져옵니다.
+<br>내가 작성한 트윗을 가져옵니다.</br>
 ![ezgif com-gif-maker (7)](https://user-images.githubusercontent.com/54207332/158103274-1a5e4b08-eebc-44b1-a58a-f23e5ea0e07f.gif)
 
 # 로그 아웃 기능
