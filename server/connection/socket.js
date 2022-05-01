@@ -14,6 +14,7 @@ class Socket {
     this.io.use((socket, next) => {
       // handshake내의 token을 받아옵니다.
       const token = socket.handshake.auth.token
+      // 토큰이 없다면 즉 로그인 하지 않았다면 에러를 던져준다.
       if (!token) {
         return next(new Error('Authentication error'))
       }

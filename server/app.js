@@ -16,7 +16,7 @@ app.use(express.json())
 app.use(helmet())
 app.use(
   cors({
-    origin: config.cors.allow,
+    origin: process.env.CORS_ALLOW_ORIGIN,
     optionsSuccessStatus: 200,
   })
 )

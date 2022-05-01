@@ -19,7 +19,7 @@ const Tweets = memo(({ tweetService, username, addable }) => {
 
     const stopSync = tweetService.onSync((tweet) => onCreated(tweet));
     return () => stopSync();
-  }, [tweetService, username, user]);
+  }, []);
 
   const onCreated = (tweet) => {
     setTweets((tweets) => [tweet, ...tweets]);
